@@ -11,7 +11,7 @@ mydb = mysql.connector.connect(
 )
 mycursor = mydb.cursor()
 app = Flask(__name__)
-
+#____________________________________________________________________
 def getAllData():
     mycursor.execute("SELECT * FROM Insetti")
     rows = mycursor.fetchall()
@@ -26,7 +26,7 @@ def home():
 def index():
     data = getAllData()
     return jsonify({'Insetti': data})
-
+#____________________________________________________________________
 #punto 3
 def addInsetti(data):
     query = "INSERT INTO Insetti (nome, famiglia, habitat, alimentazione, caratteristiche) VALUES (%s, %s, %s, %s, %s)"
@@ -43,8 +43,24 @@ def add():
         return jsonify({'message': 'Insetto inserito con successo'}), 201
     else:
         return jsonify({'message': 'Errore durante lo svolgimento della operazione'}), 500
+#____________________________________________________________________
+#punto 4
+def deleteInsetti(id):
+    query = "DELETE FROM Insetti WHERE id = %s"
+    mycursor.execute(query, (id,))
+    mydb.commit()
+    return mycursor.rowcount
+
+@app.route("/delete/<id>", methods=["DELETE"])
+def delete(id):
+    rows_deleted = deleteInsetti(id)
+    if rows_deleted == 1:
+        return jsonify({'message': 'Insetto eliminato con successo'}), 200
+    else:
+        return jsonify({'message': 'Errore durante l\'eliminazione o ID non trovato'}), 404
 
 
 
+#____________________________________________________________________
 if __name__ == "__main__":
     app.run()
