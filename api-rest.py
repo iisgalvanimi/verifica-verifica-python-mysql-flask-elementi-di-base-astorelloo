@@ -58,8 +58,28 @@ def delete(id):
         return jsonify({'message': 'Insetto eliminato con successo'}), 200
     else:
         return jsonify({'message': 'Errore durante l\'eliminazione o ID non trovato'}), 404
+#___________________________________________________
+#punto 6
+def updateInsetto(id, data):#(nome, famiglia, habitat, alimentazione, caratteristiche)
+    query = "UPDATE Insetti SET nome = %s, famiglia = %s, habitat = %s, alimentazione = %s, caratteristiche = %s WHERE id = %s"
+    values = (data['nome'], data['famiglia'], data['habitat'], data['alimentazione'],data['caratteristiche'], id)
+    mycursor.execute(query, values)
+    mydb.commit()
+    return mycursor.rowcount
 
+@app.route("/update/<id>", methods=["PUT"])
+def update(id):
+    data = request.json
+    
+    required_fields = ['nome', 'famiglia', 'habitat', 'alimentazione', 'caratteristiche']
+    if not all(field in data for field in required_fields):
+        return jsonify({'message': 'Dati mancanti'}), 400
 
+    rows_updated = updateInsetto(id, data)
+    if rows_updated == 1:
+        return jsonify({'message': 'Insetto aggiornato con successo'}), 200
+    else:
+        return jsonify({'message': 'Errore'}), 404
 
 #____________________________________________________________________
 if __name__ == "__main__":
