@@ -82,5 +82,16 @@ def update(id):
         return jsonify({'message': 'Errore'}), 404
 
 #____________________________________________________________________
+#punto 7
+def getByNome(nome):
+    query = "SELECT * FROM Insetti WHERE nome = %s"
+    mycursor.execute(query, (nome,))
+    rows = mycursor.fetchall()
+    return rows
+@app.route("/nome/<nome>")
+def getInsettoByNome(nome):
+    data = getByNome(nome)
+    return jsonify({nome: data})
+#____________________________________________________________________
 if __name__ == "__main__":
     app.run()
